@@ -21,10 +21,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Zilliqa/gozilliqa-sdk/util"
+	"github.com/btcsuite/btcd/btcec/v2"
 	"math/big"
 
 	"github.com/Zilliqa/gozilliqa-sdk/keytools"
-	"github.com/btcsuite/btcd/btcec"
 )
 
 var bintZero = big.NewInt(0)
@@ -99,13 +99,13 @@ func Verify(publicKey []byte, msg []byte, r []byte, s []byte) bool {
 		return false
 	}
 
-	puk, err := btcec.ParsePubKey(publicKey, keytools.Secp256k1)
+	puk, err := btcec.ParsePubKey(publicKey)
 
 	if err != nil {
 		panic("parse public key error")
 	}
 
-	pkx, pky := puk.X, puk.Y
+	pkx, pky := puk.X(), puk.Y()
 
 	lx, ly := keytools.Secp256k1.ScalarMult(pkx, pky, r)
 	rx, ry := keytools.Secp256k1.ScalarBaseMult(s)
